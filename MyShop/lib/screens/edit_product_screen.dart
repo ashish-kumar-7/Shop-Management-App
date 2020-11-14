@@ -31,6 +31,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       'imageUrl': '',
     };
     var _isInit = true;
+    var _isLoading = false;
 
   @override
   void initState() {
@@ -83,18 +84,51 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final isValid =_form.currentState.validate();
     if (!isValid) {
       return;
     }
     _form.currentState.save();
+    setState(() {
+      _isLoading = true;
+    });
     if(_editedProduct.id != null) {
-      Provider.of<Products>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
+      await Provider.of<Products>(context, listen: false)
+      .updateProduct(_editedProduct.id, _editedProduct);
     } else {
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+      try {
+        await Provider.of<Products>(context, listen: false)
+      .addProduct(_editedProduct);
+      } catch (error) {
+        await showDialog<Null>(
+          context: context, 
+          builder: (ctx) => AlertDialog(
+          title: Text('An error was occured!'), 
+          content: Text('Something went wrong!'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Okay'),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              }, 
+            )
+          ],
+          ),
+          );
+      } 
+      //finally {
+      //  setState(() {
+      //_isLoading = false;
+    //});
+      //  Navigator.of(context).pop();
+      //}
     }
-    Navigator.of(context).pop();
+    setState(() {
+      _isLoading = false;
+    });
+      Navigator.of(context).pop();
+    //Navigator.of(context).pop();
   }
 
   @override
@@ -109,7 +143,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             ),
         ],
       ),
-      body: Padding(
+      body: _isLoading ? Center(child: CircularProgressIndicator(),) : Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _form,
