@@ -63,7 +63,8 @@ class AuthScreen extends StatelessWidget {
                       child: Text(
                         'MyShop',
                         style: TextStyle(
-                          color: Theme.of(context).accentTextTheme.headline6.color,
+                          color:
+                              Theme.of(context).accentTextTheme.headline6.color,
                           fontSize: 47,
                           fontFamily: 'Anton',
                           fontWeight: FontWeight.normal,
@@ -72,7 +73,7 @@ class AuthScreen extends StatelessWidget {
                     ),
                   ),
                   Flexible(
-                    flex: deviceSize.width > 600 ? 2: 1,
+                    flex: deviceSize.width > 600 ? 2 : 1,
                     child: AuthCard(),
                   ),
                 ],
@@ -106,7 +107,7 @@ class _AuthCardState extends State<AuthCard> {
 
   void _showErrorDialog(String message) {
     showDialog(
-      context: context, 
+      context: context,
       builder: (ctx) => AlertDialog(
         title: Text('An Error Occurred!'),
         content: Text(message),
@@ -115,11 +116,11 @@ class _AuthCardState extends State<AuthCard> {
             child: Text('Okay'),
             onPressed: () {
               Navigator.of(ctx).pop();
-            }, 
-            )
+            },
+          )
         ],
-        ),
-      );
+      ),
+    );
   }
 
   Future<void> _submit() async {
@@ -133,21 +134,21 @@ class _AuthCardState extends State<AuthCard> {
     });
     try {
       if (_authMode == AuthMode.Login) {
-      // Log user in
-      await Provider.of<Auth>(context, listen: false).login(
-        _authData['email'], 
-        _authData['password'],
+        // Log user in
+        await Provider.of<Auth>(context, listen: false).login(
+          _authData['email'],
+          _authData['password'],
         );
-    } else {
-      // Sign user up
-      await Provider.of<Auth>(context, listen: false).signup(
-        _authData['email'], 
-        _authData['password'],
+      } else {
+        // Sign user up
+        await Provider.of<Auth>(context, listen: false).signup(
+          _authData['email'],
+          _authData['password'],
         );
       }
     } on HttpException catch (error) {
       var errorMessage = 'Authentication failed!';
-      if(error.toString().contains('EMAIL_EXISTS')) {
+      if (error.toString().contains('EMAIL_EXISTS')) {
         errorMessage = 'This email address is already in use.';
       } else if (error.toString().contains('INVALID_EMAIL')) {
         errorMessage = 'This ia not a valid email address';
@@ -160,7 +161,8 @@ class _AuthCardState extends State<AuthCard> {
       }
       _showErrorDialog(errorMessage);
     } catch (error) {
-      const errorMessage = 'Could not authenticate you. Please try again later.';
+      const errorMessage =
+          'Could not authenticate you. Please try again later.';
       _showErrorDialog(errorMessage);
     }
 
@@ -236,7 +238,7 @@ class _AuthCardState extends State<AuthCard> {
                         ? (value) {
                             if (value != _passwordController.text) {
                               return 'Passwords do not match!';
-                            } 
+                            }
                             return null;
                           }
                         : null,
